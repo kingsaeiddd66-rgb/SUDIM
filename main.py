@@ -107,7 +107,6 @@ funcs = {
     'splus_result': splus,
     'rubika_result': rubika,
     'shad_result': shad,
-    'igap_result': igap
 }
 
 results = {}
