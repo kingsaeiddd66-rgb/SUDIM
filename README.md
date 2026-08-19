@@ -44,9 +44,6 @@ It can collect data from Bale, Rubika, Eitaa, Soroush+, IGap and Shad.
 
 ## 📊 Messengers Status | وضعیت پیامرسان ها
 
-
-#### ⚠️ آیگپ موقتیا حذف شد(یکسری تغییرات توی کد های سایتشون انگاری ایجاد کردن که اگه فرصت پیش بیاد اپدیتش میکنم) | The iGap module has been temporarily removed (it seems they made some changes to their site's code; I'll update ⚠️it if I get the chance). 
-
 | پیامرسان / Messenger | نام / Name | آخرین بازدید / Last Seen | نام کاربری / Username | بیوگرافی / Bio | آیدی عددی / Numeric ID | پرمیوم / Premium | جنسیت / Gender | تاریخ تولد / Birthdate |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | بله / Bale | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
