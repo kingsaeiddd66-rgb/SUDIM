@@ -31,53 +31,71 @@ def get_data(number_phone):
 
         page.fill('[name="firstName"]', number_phone)
         page.fill('input#outlined-controlled', edited_number_phone)
+        page.wait_for_timeout(500)
 
-        page.locator('#portals header button').first.click()
-        page.locator('#portals header button').first.click()
+        try: 
+            page.locator('#portals header i').first.wait_for(state='visible', timeout=1000)
+            page.locator('#portals header i').first.click(timeout=500)
+            page.locator('[name="firstName"]').first.wait_for(state='detached', timeout=5000)
+        except: 
+            page.locator('#portals header i').first.click(force=True, timeout=500)
+
+        page.wait_for_timeout(500)
 
         try: 
             page.locator('.icon-error').wait_for(state='visible', timeout=2000)
-            return('[red]Its Doesnt Have igap.[/red]')
+            return('\n[red]Its Doesnt Have igap.[/red]')
         except: 
             pass
 
         try: 
-            page.locator(f'.flex.flex-row.justify-between').filter(has_text=number_phone).wait_for(state='visible', timeout=3000)
+            page.locator(f'.flex.flex-row.justify-between').filter(has_text=number_phone).first.wait_for(state='visible', timeout=3000)
             page.locator(f'.flex.flex-row.justify-between').filter(has_text=number_phone).first.click()
-            page.locator('.font-bold.flex.flex-row.label-md.text-surface-on.gap-sm.items-center').filter(has_text=number_phone).click()
+            page.locator('.font-bold.flex.flex-row.label-md.text-surface-on.gap-sm.items-center').wait_for(state='visible', timeout=2000)
+            page.locator('.font-bold.flex.flex-row.label-md.text-surface-on.gap-sm.items-center').click()
         except: 
             while_counter = 0
-            while while_counter < 3: 
-                try: 
-                    page.reload()
-                    page.click('.icon-ig-contacts-outline')
-                    page.click('.icon-contacts')
-                    page.click('.icon-add-member')
+            try: 
+                while while_counter < 3: 
+                    try: 
+                        page.reload()
+                        page.click('.icon-ig-contacts-outline')
+                        page.click('.icon-contacts')
+                        page.click('.icon-add-member')
 
-                    page.fill('[name="firstName"]', number_phone)
-                    page.fill('input#outlined-controlled', edited_number_phone)
+                        page.fill('[name="firstName"]', number_phone)
+                        page.fill('input#outlined-controlled', edited_number_phone)
 
-                    page.locator('#portals header button').first.click()
-                    page.locator('#portals header button').first.click()
-                    page.locator(f'.flex.flex-row.justify-between').filter(has_text=number_phone).first.click()
-                    page.locator('.font-bold.flex.flex-row.label-md.text-surface-on.gap-sm.items-center').filter(has_text=number_phone).click()
-                except Exception as last_e: 
-                    page.wait_for_timeout(1000)
-                    last_e = last_e
-                    continue
-            else: 
-                return('[bright_green bold]igap:[/bright_green bold]\n[bright_yellow]{last_e}[/bright_yellow]')
+                        try: 
+                            page.locator('#portals header i').first.wait_for(state='visible', timeout=1000)
+                            page.locator('#portals header i').first.click(timeout=500)
+                            page.locator('[name="firstName"]').first.wait_for(state='detached', timeout=5000)
+                        except: 
+                            page.locator('#portals header i').first.click(force=True, timeout=500)
 
+                        page.locator(f'.flex.flex-row.justify-between').filter(has_text=number_phone).first.wait_for(state='visible', timeout=3000)
+                        page.locator(f'.flex.flex-row.justify-between').filter(has_text=number_phone).first.click()
+                        page.locator('.font-bold.flex.flex-row.label-md.text-surface-on.gap-sm.items-center').wait_for(state='visible', timeout=2000)
+                        page.locator('.font-bold.flex.flex-row.label-md.text-surface-on.gap-sm.items-center').click()
 
-
-        page.locator('.h-[90%] .icon-ig-kebab-menu-outline')
+                    except Exception: 
+                        continue
+             
+            except Exception as last_e:
+                return(f'[bright_green bold]igap:[/bright_green bold]\n[bright_yellow]{last_e}[/bright_yellow]')
 
         page.locator('.flex.flex-row.justify-between', has_text=number_phone).locator('.icon-ig-kebab-menu-outline.text-2xl').first.click()
-        page.locator('.icon-delete.text-surface-on_variant.text-xl.mx-1').first.locator('..').click()
+        page.locator(f'.flex.flex-row.justify-between').filter(has_text=number_phone).first.wait_for(state='visible', timeout=3000)
+        icons_delete_contact = page.locator('.icon-delete.text-surface-on_variant.text-xl.mx-1').all()
+        for icon in icons_delete_contact: 
+            try: 
+                icon.wait_for(state='visible', timeout=100)
+                icon.locator('..').click()
+            except: 
+                pass
         page.click('#next-button')
 
-        page.locator('.flex.flex-row.justify-between').filter(has_text=number_phone).wait_for(state='detached', timeout=4000)
-        page.wait_for_timeout(2000)
+        page.wait_for_timeout(1000)
 
         #name
         while_counter2 = 0
@@ -87,6 +105,8 @@ def get_data(number_phone):
                 break
             page.wait_for_timeout(1000)
             while_counter2 += 1
+        else: 
+            name = None
 
         #last_seen
         last_seen = page.locator('.flex.flex-col.mx-2.truncate .text-xs').text_content(timeout=500)
@@ -131,6 +151,11 @@ def get_data(number_phone):
             img_counter = None
 
         console.print('[bright_green]Igap Finished Successfully![/bright_green]')
+
+        try: 
+            img_counter += 1
+        except: 
+            pass
 
         return(f'''
 [bright_green bold]Igap:[/bright_green bold][bright_yellow]
