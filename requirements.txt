@@ -1,5 +1,6 @@
 rich==13.9.4
 playwright==1.58.0
 flask==3.0.2
+gunicorn==23.0.0
 #for chromium
 #playwright install chromium
