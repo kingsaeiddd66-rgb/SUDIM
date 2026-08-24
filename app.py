@@ -15,12 +15,13 @@ def scan():
     if not phone:
         return jsonify({'error': 'phone required'}), 400
     
+    # ساخت پوشه bale_browser
     os.makedirs('browsers/bale_browser', exist_ok=True)
     
-    # پاک کردن SingletonLock ها
+    # پاک کردن همه فایل‌های قفل
     for root, dirs, files in os.walk('browsers'):
         for file in files:
-            if file in ['SingletonLock', 'SingletonCookie', 'SingletonSocket']:
+            if 'Singleton' in file:
                 try:
                     os.remove(os.path.join(root, file))
                 except:
