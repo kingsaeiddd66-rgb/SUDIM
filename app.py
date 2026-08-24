@@ -15,30 +15,12 @@ def scan():
     if not phone:
         return jsonify({'error': 'phone required'}), 400
     
-    # ساخت پوشه خالی bale_browser
     os.makedirs('browsers/bale_browser', exist_ok=True)
     
     # پاک کردن SingletonLock ها
-    lock_files = [
-        'browsers/splus_browser/SingletonLock',
-        'browsers/eitaa_browser/SingletonLock',
-        'browsers/shad_browser/SingletonLock',
-        'browsers/igap_browser/SingletonLock',
-        'browsers/bale_browser/SingletonLock',
-        'browsers/rubika_browser/SingletonLock',
-    ]
-    
-    for lock_file in lock_files:
-        if os.path.exists(lock_file):
-            try:
-                os.remove(lock_file)
-            except:
-                pass
-    
-    # پاک کردن فایل‌های قفل دیگر
     for root, dirs, files in os.walk('browsers'):
         for file in files:
-            if file == 'SingletonLock' or file == 'SingletonCookie' or file == 'SingletonSocket':
+            if file in ['SingletonLock', 'SingletonCookie', 'SingletonSocket']:
                 try:
                     os.remove(os.path.join(root, file))
                 except:
@@ -47,8 +29,7 @@ def scan():
     result = subprocess.run(
         [sys.executable, 'main.py', phone],
         capture_output=True,
-        text=True,
-        timeout=600
+        text=True
     )
     
     return jsonify({
