@@ -15,10 +15,8 @@ def scan():
     if not phone:
         return jsonify({'error': 'phone required'}), 400
     
-    # ساخت پوشه bale_browser
     os.makedirs('browsers/bale_browser', exist_ok=True)
     
-    # پاک کردن همه فایل‌های قفل
     for root, dirs, files in os.walk('browsers'):
         for file in files:
             if 'Singleton' in file:
@@ -40,4 +38,5 @@ def scan():
     })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
