@@ -1,0 +1,48 @@
+name: sudim-job
+
+on:
+  repository_dispatch:
+    types: [sudim-lookup]
+  workflow_dispatch:
+    inputs:
+      messenger:
+        description: "eitaa|bale|soroush|shad|igap|rubika"
+        required: true
+      phone:
+        description: "Phone number"
+        required: true
+      chat_id:
+        description: "Telegram chat id for result"
+        required: true
+
+jobs:
+  lookup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install playwright requests python-dotenv
+          pip install -e . || pip install sudim || true
+          python -m playwright install --with-deps chromium
+
+      - name: Run SUDIM lookup
+        env:
+          MESSENGER: ${{ github.event.client_payload.messenger || github.event.inputs.messenger }}
+          PHONE: ${{ github.event.client_payload.phone || github.event.inputs.phone }}
+          JOB_ID: ${{ github.run_id }}
+        run: python run_lookup.py "$MESSENGER" "$PHONE" "$JOB_ID"
+
+      - name: Send result to Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ github.event.client_payload.chat_id || github.event.inputs.chat_id }}
+          JOB_STATUS: ${{ job.status }}
+        run: python send_telegram.py result.json
