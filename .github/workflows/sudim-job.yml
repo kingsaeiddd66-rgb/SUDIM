@@ -1,48 +1,43 @@
-name: sudim-job
+name: telegram-pipeline-test
 
 on:
-  repository_dispatch:
-    types: [sudim-lookup]
   workflow_dispatch:
     inputs:
-      messenger:
-        description: "eitaa|bale|soroush|shad|igap|rubika"
-        required: true
-      phone:
-        description: "Phone number"
-        required: true
       chat_id:
-        description: "Telegram chat id for result"
+        description: "Telegram chat ID"
         required: true
+        type: string
 
 jobs:
-  lookup:
+  test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install Telegram dependencies
         run: |
-          pip install playwright requests python-dotenv
-          pip install -e . || pip install sudim || true
-          python -m playwright install --with-deps chromium
+          pip install requests python-dotenv
 
-      - name: Run SUDIM lookup
-        env:
-          MESSENGER: ${{ github.event.client_payload.messenger || github.event.inputs.messenger }}
-          PHONE: ${{ github.event.client_payload.phone || github.event.inputs.phone }}
-          JOB_ID: ${{ github.run_id }}
-        run: python run_lookup.py "$MESSENGER" "$PHONE" "$JOB_ID"
+      - name: Create test result
+        run: |
+          python test_result.py
+
+      - name: Show result.json
+        run: |
+          echo "----- result.json -----"
+          cat result.json
 
       - name: Send result to Telegram
-        if: always()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHAT_ID: ${{ github.event.client_payload.chat_id || github.event.inputs.chat_id }}
+          CHAT_ID: ${{ github.event.inputs.chat_id }}
           JOB_STATUS: ${{ job.status }}
-        run: python send_telegram.py result.json
+        run: |
+          python send_telegram.py result.json
